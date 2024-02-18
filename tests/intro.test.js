@@ -1,7 +1,7 @@
-import { describe, test, it, expect } from "vitest";
-import { calculateAverage, factorial, fizzBuzz, max } from "../src/intro";
+import { describe, test, it, expect } from 'vitest';
+import { calculateAverage, factorial, fizzBuzz, max } from '../src/intro';
 
-describe("max", () => {
+describe('max', () => {
     it('should return the first argument if it is greater', () => {
         expect(max(2, 1)).toBe(2);
     });
@@ -12,7 +12,7 @@ describe("max", () => {
 
     it('should return the first argument if arguments are equal', () => {
         expect(max(1, 1)).toBe(1);
-    })
+    });
 });
 
 describe('fizzBuzz', () => {
@@ -33,7 +33,7 @@ describe('fizzBuzz', () => {
     });
 });
 
-describe('calculateAverage', () =>{
+describe('calculateAverage', () => {
     it('should return NaN if given an empty array', () => {
         expect(calculateAverage([])).toBe(NaN);
     });
@@ -51,7 +51,7 @@ describe('calculateAverage', () =>{
     });
 });
 
-describe('factorial', () =>{
+describe('factorial', () => {
     it('should return 1 if argument is 0', () => {
         expect(factorial(0)).toBe(1);
     });
@@ -68,20 +68,20 @@ describe('factorial', () =>{
         expect(factorial(3)).toBe(6);
     });
 
-    it('should return 24 if argument is 4',  () => {
+    it('should return 24 if argument is 4', () => {
         expect(factorial(4)).toBe(24);
     });
 
     it('should return undefined if argument is a negative number', () => {
         expect(factorial(-1)).toBeUndefined();
-    })
+    });
 });
 
-describe('test matchers',() => {
-    test("should use the toEqual matcher", () => {
-        const result = { name: "Mosh" };
+describe('test matchers', () => {
+    test('should use the toEqual matcher', () => {
+        const result = { name: 'Mosh' };
         // toBe matcher is useful for asserting primitive data types
         // toEqual matcher is useful for asserting non primitive data types
-        expect(result).toEqual({ name: "Mosh" });
-    })
-})
+        expect(result).toEqual({ name: 'Mosh' });
+    });
+});

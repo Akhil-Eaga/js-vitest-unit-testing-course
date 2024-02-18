@@ -1,17 +1,34 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { Stack, calculateDiscount, canDrive, fetchData, getCoupons, isPriceInRange, isValidUsername, validateUserInput } from "../src/core";
-import { max } from "../src/intro";
+import {
+    afterAll,
+    afterEach,
+    beforeAll,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from 'vitest';
+import {
+    Stack,
+    calculateDiscount,
+    canDrive,
+    fetchData,
+    getCoupons,
+    isPriceInRange,
+    isValidUsername,
+    validateUserInput,
+} from '../src/core';
+import { max } from '../src/intro';
 
-describe("getCoupons", () => {
-    test("should return an array of coupons", () => {
+describe('getCoupons', () => {
+    test('should return an array of coupons', () => {
         const coupons = getCoupons();
         expect(Array.isArray(coupons)).toBe(true);
         expect(getCoupons().length).toBeGreaterThan(0);
     });
 
-    test("should return an array with valid coupon codes", () => {
+    test('should return an array with valid coupon codes', () => {
         const coupons = getCoupons();
-        coupons.forEach(coupon => {
+        coupons.forEach((coupon) => {
             expect(coupon).toHaveProperty('code');
             expect(typeof coupon.code).toBe('string');
             expect(coupon.code).toBeTruthy(); // checking for non empty strings
@@ -20,12 +37,12 @@ describe("getCoupons", () => {
 
     test('should return an array with valid discounts', () => {
         const coupons = getCoupons();
-        coupons.forEach(coupon => {
+        coupons.forEach((coupon) => {
             expect(coupon).toHaveProperty('discount');
             expect(typeof coupon.discount).toBe('number');
             expect(coupon.discount).toBeGreaterThan(0);
             expect(coupon.discount).toBeLessThan(1);
-        })
+        });
     });
 });
 
@@ -36,25 +53,25 @@ describe('calculateDiscount', () => {
     });
 
     test('should handle non-numeri price', () => {
-        expect(calculateDiscount("10", "SAVE10")).toMatch(/invalid/i);
+        expect(calculateDiscount('10', 'SAVE10')).toMatch(/invalid/i);
     });
 
     test('should handle negative price', () => {
-        expect(calculateDiscount(-10, "SAVE10")).toMatch(/invalid/i);
+        expect(calculateDiscount(-10, 'SAVE10')).toMatch(/invalid/i);
     });
 
-    test("should handle non-string discount code", () => {
+    test('should handle non-string discount code', () => {
         expect(calculateDiscount(10, 10)).toMatch(/invalid/i);
     });
 
     test('should handle invalid discount codes', () => {
-        expect(calculateDiscount(10, "INVALID")).toBe(10);
-    })
+        expect(calculateDiscount(10, 'INVALID')).toBe(10);
+    });
 });
 
 describe('validateUserInput', () => {
     test('should return success if given valid input', () => {
-        expect(validateUserInput("mosh", 42)).toMatch(/success/i);
+        expect(validateUserInput('mosh', 42)).toMatch(/success/i);
     });
 
     test('should return an error if username is not a string', () => {
@@ -67,23 +84,23 @@ describe('validateUserInput', () => {
 
     test('should return an error if username is longer than 255 chars', () => {
         expect(validateUserInput('A'.repeat(256), 42)).toMatch(/invalid/i);
-    })
+    });
 
     test('should return an error if age is not a number', () => {
-        expect(validateUserInput("mosh", "42")).toMatch(/invalid/i);
+        expect(validateUserInput('mosh', '42')).toMatch(/invalid/i);
     });
 
     test('should return an error if age is less than 18', () => {
-        expect(validateUserInput("mosh", 17)).toMatch(/invalid/i);
+        expect(validateUserInput('mosh', 17)).toMatch(/invalid/i);
     });
 
     test('should return an error message if age is greater than 100', () => {
-        expect(validateUserInput("mosh", 101)).toMatch(/invalid/i);
-    })
+        expect(validateUserInput('mosh', 101)).toMatch(/invalid/i);
+    });
 
     test('should return an error message if both username and age are invalid', () => {
         const result = validateUserInput('', 0);
-        
+
         expect(result).toMatch(/invalid username/i);
         expect(result).toMatch(/invalid age/i);
     });
@@ -96,11 +113,10 @@ describe('isPriceInRange', () => {
         { scenario: 'price between min and max', price: 50, result: true },
         { scenario: 'price = max', price: 100, result: true },
         { scenario: 'price > max', price: 200, result: false },
-    ])('should return $result when $scenario', ({ price, result}) => {
+    ])('should return $result when $scenario', ({ price, result }) => {
         expect(isPriceInRange(price, 0, 100)).toBe(result);
     });
-})
-
+});
 
 describe('isValidUsername', () => {
     const minLength = 5;
@@ -128,11 +144,10 @@ describe('isValidUsername', () => {
         expect(isValidUsername(undefined)).toBe(false);
         expect(isValidUsername(null)).toBe(false);
         expect(isValidUsername(1)).toBe(false);
-    })
+    });
 });
 
 describe('canDrive', () => {
-
     test('should return an error for invalid country code', () => {
         expect(canDrive(17, 'FR')).toMatch(/invalid/i);
     });
@@ -149,9 +164,12 @@ describe('canDrive', () => {
         { age: 16, country: 'UK', result: false },
         { age: 17, country: 'UK', result: true },
         { age: 18, country: 'UK', result: true },
-    ])('should return $result for $age, $country', ({ age, country, result }) => {
-        expect(canDrive(age, country)).toBe(result);
-    });
+    ])(
+        'should return $result for $age, $country',
+        ({ age, country, result }) => {
+            expect(canDrive(age, country)).toBe(result);
+        },
+    );
 });
 
 describe('fetchData', () => {
@@ -159,7 +177,7 @@ describe('fetchData', () => {
         fetchData().then((result) => {
             expect(Array.isArray(result)).toBe(true);
             expect(result.length).toBeGreaterThan(0);
-        })
+        });
     });
 
     test('should return a promise that resolves to an array of numbers (async await)', async () => {
@@ -172,9 +190,9 @@ describe('fetchData', () => {
     test('should return a promise that rejects to throw an error message', async () => {
         try {
             const result = await fetchData(true);
-        } catch(error) {
+        } catch (error) {
             expect(error).toHaveProperty('reason');
-            expect(error.reason).toMatch(/failed/i)
+            expect(error.reason).toMatch(/failed/i);
         }
     });
 });
@@ -197,9 +215,8 @@ describe('test suite for setup and teardown', () => {
     });
 
     test('test case 1', () => {});
-    test('test case 2', () => {});  
+    test('test case 2', () => {});
 });
-
 
 describe('stack', () => {
     let stack;
@@ -239,7 +256,7 @@ describe('stack', () => {
     });
 
     test('peek should throw an error if the stack is empty', () => {
-        expect(() => stack.peek()).toThrow(/empty/i)
+        expect(() => stack.peek()).toThrow(/empty/i);
     });
 
     test('isEmpty should return true if stack is empty', () => {
@@ -262,9 +279,9 @@ describe('stack', () => {
     test('clear should remove all items from the stack', () => {
         stack.push(1);
         stack.push(2);
-        
+
         stack.clear();
 
         expect(stack.size()).toBe(0);
-    })
-})
+    });
+});

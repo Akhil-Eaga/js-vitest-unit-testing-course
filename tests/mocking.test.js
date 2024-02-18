@@ -1,11 +1,20 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import { getDiscount, getPriceInCurrency, getShippingInfo, isOnline, login, renderPage, signUp, submitOrder } from "../src/mocking";
-import { getExchangeRate } from "../src/libs/currency";
-import { getShippingQuote } from "../src/libs/shipping";
-import { trackPageView } from "../src/libs/analytics";
-import { charge } from "../src/libs/payment";
-import { sendEmail } from "../src/libs/email";
-import security from "../src/libs/security";
+import { afterEach, describe, expect, test, vi } from 'vitest';
+import {
+    getDiscount,
+    getPriceInCurrency,
+    getShippingInfo,
+    isOnline,
+    login,
+    renderPage,
+    signUp,
+    submitOrder,
+} from '../src/mocking';
+import { getExchangeRate } from '../src/libs/currency';
+import { getShippingQuote } from '../src/libs/shipping';
+import { trackPageView } from '../src/libs/analytics';
+import { charge } from '../src/libs/payment';
+import { sendEmail } from '../src/libs/email';
+import security from '../src/libs/security';
 
 // when this line is executed, vi test mocks all the exported functions in the currency.js module
 // when mocking an entire module like this, vitest first mocks all the exported functions in the module and then runs
@@ -15,16 +24,16 @@ import security from "../src/libs/security";
 
 vi.mock('../src/libs/currency');
 vi.mock('../src/libs/shipping');
-vi.mock("../src/libs/analytics");
-vi.mock("../src/libs/payment");
+vi.mock('../src/libs/analytics');
+vi.mock('../src/libs/payment');
 
 // partial mocking the email module
-vi.mock("../src/libs/email", async (importOriginal) => {
+vi.mock('../src/libs/email', async (importOriginal) => {
     const originalModule = await importOriginal();
     return {
         ...originalModule, // just returning the original functions without mocking them
         sendEmail: vi.fn(), // returning a mock for the sendEmail function to achieve partial mocking
-    }
+    };
 });
 
 describe('test suite', () => {
@@ -39,10 +48,10 @@ describe('test suite', () => {
         // greet().then(result => console.log(result));
 
         // mockImplementation takes in an arrow function that is used to mock the implementation of the actual fn
-        greet.mockImplementation(name => 'Hello ' + name);
-        greet("Mosh");
+        greet.mockImplementation((name) => 'Hello ' + name);
+        greet('Mosh');
 
-        expect(greet).toHaveBeenCalled()
+        expect(greet).toHaveBeenCalled();
         expect(greet).toHaveBeenCalledOnce();
         expect(greet).toHaveBeenCalledWith('Mosh');
 
@@ -54,38 +63,41 @@ describe('test suite', () => {
 
 describe('sendText', () => {
     test('should return "ok" when sendText is invoked', () => {
-        const sendText = vi.fn()
+        const sendText = vi.fn();
         sendText.mockReturnValue('ok');
 
-        const result = sendText("message");
+        const result = sendText('message');
 
         expect(sendText).toHaveBeenCalledWith('message');
         expect(result).toBe('ok');
-    })
+    });
 });
 
 describe('getPriceInCurrency', () => {
     test('should return price in target currency', () => {
-        vi.mocked(getExchangeRate).mockReturnValue(1.5)
-        
+        vi.mocked(getExchangeRate).mockReturnValue(1.5);
+
         const price = getPriceInCurrency(10, 'AUD');
-        
+
         expect(price).toBe(15);
-        expect(vi.mocked(getExchangeRate)).toHaveBeenCalledWith('USD', 'AUD')
-    })
+        expect(vi.mocked(getExchangeRate)).toHaveBeenCalledWith('USD', 'AUD');
+    });
 });
 
 describe('getShippingInfo', () => {
     test('should throw an error message when quote cannot be fetched', () => {
         vi.mocked(getShippingQuote).mockReturnValue(null);
-        const result = getShippingInfo("FR");
+        const result = getShippingInfo('FR');
 
         expect(result).toMatch(/unavailable/i);
         expect(vi.mocked(getShippingQuote)).toHaveBeenCalledWith('FR');
     });
 
     test('should return shipping info when a valid quote can be fetched', () => {
-        vi.mocked(getShippingQuote).mockReturnValue({cost: 10, estimatedDays: 2});
+        vi.mocked(getShippingQuote).mockReturnValue({
+            cost: 10,
+            estimatedDays: 2,
+        });
         const result = getShippingInfo('FR');
 
         expect(result).toMatch('$10');
@@ -93,7 +105,7 @@ describe('getShippingInfo', () => {
         // '$', '(' and ')' have special meaning in the context of regex so they need to be escaped to use the literals
         expect(result).toMatch(/shipping cost: \$10 \(2 days\)/i);
         expect(vi.mocked(getShippingQuote)).toHaveBeenCalledWith('FR');
-    })
+    });
 });
 
 describe('renderPage', () => {
@@ -101,20 +113,20 @@ describe('renderPage', () => {
         const result = await renderPage();
         expect(result).toMatch(/content/i);
     });
-    
+
     test('should call analytics', async () => {
         await renderPage();
-        expect(trackPageView).toHaveBeenCalledWith("/home");
+        expect(trackPageView).toHaveBeenCalledWith('/home');
     });
 });
 
 describe('submitOrder', () => {
     const order = { totalAmount: 100 };
-    const creditCard = { creditCardNumber: "1234 1234 1234 1234" };
-    
+    const creditCard = { creditCardNumber: '1234 1234 1234 1234' };
+
     test('should charge the customer', async () => {
-        vi.mocked(charge).mockResolvedValue({ status: "failed"});
-        
+        vi.mocked(charge).mockResolvedValue({ status: 'failed' });
+
         await submitOrder(order, creditCard);
 
         expect(charge).toHaveBeenCalledWith(creditCard, order.totalAmount);
@@ -130,7 +142,7 @@ describe('submitOrder', () => {
 
     test('should handle failed payment', async () => {
         vi.mocked(charge).mockResolvedValue({ status: 'failed' });
-        
+
         const result = await submitOrder(order, creditCard);
 
         expect(result).toEqual({ success: false, error: 'payment_error' });
@@ -179,41 +191,41 @@ describe('login', () => {
 
         const securityCode = spy.mock.results[0].value.toString();
         expect(sendEmail).toHaveBeenCalledWith(email, securityCode);
-    })
+    });
 });
 
 describe('isOnline', () => {
     test('should return false if the current hour is outside the opening hours', () => {
-        vi.setSystemTime("2024-01-02 07:59");
+        vi.setSystemTime('2024-01-02 07:59');
         expect(isOnline()).toBe(false);
 
-        vi.setSystemTime("2024-01-02 20:01");
+        vi.setSystemTime('2024-01-02 20:01');
         expect(isOnline()).toBe(false);
     });
 
     test('should return true if the current hour is within opening hours', () => {
-        vi.setSystemTime("2024-01-01 08:00");
+        vi.setSystemTime('2024-01-01 08:00');
         expect(isOnline()).toBe(true);
 
-        vi.setSystemTime("2024-01-01 19:59");
+        vi.setSystemTime('2024-01-01 19:59');
         expect(isOnline()).toBe(true);
     });
 });
 
 describe('getDiscount', () => {
     test('should return 0.2 on Christmas day', () => {
-        vi.setSystemTime("2023-12-25 00:01");
+        vi.setSystemTime('2023-12-25 00:01');
         expect(getDiscount()).toBe(0.2);
 
-        vi.setSystemTime("2023-12-25 23:59");
+        vi.setSystemTime('2023-12-25 23:59');
         expect(getDiscount()).toBe(0.2);
     });
 
     test('should retur 0 on any other day', () => {
-        vi.setSystemTime("2023-12-24 23:59");
+        vi.setSystemTime('2023-12-24 23:59');
         expect(getDiscount()).toBe(0);
 
-        vi.setSystemTime("2023-12-26 00:01");
+        vi.setSystemTime('2023-12-26 00:01');
         expect(getDiscount()).toBe(0);
-    })
-})
+    });
+});
