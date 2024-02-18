@@ -5,7 +5,7 @@ import {
   beforeEach,
   describe,
   expect,
-  test,
+  test
 } from 'vitest';
 import {
   Stack,
@@ -15,9 +15,8 @@ import {
   getCoupons,
   isPriceInRange,
   isValidUsername,
-  validateUserInput,
+  validateUserInput
 } from '../src/core';
-import { max } from '../src/intro';
 
 describe('getCoupons', () => {
   test('should return an array of coupons', () => {
@@ -112,7 +111,7 @@ describe('isPriceInRange', () => {
     { scenario: 'price = min', price: 0, result: true },
     { scenario: 'price between min and max', price: 50, result: true },
     { scenario: 'price = max', price: 100, result: true },
-    { scenario: 'price > max', price: 200, result: false },
+    { scenario: 'price > max', price: 200, result: false }
   ])('should return $result when $scenario', ({ price, result }) => {
     expect(isPriceInRange(price, 0, 100)).toBe(result);
   });
@@ -163,7 +162,7 @@ describe('canDrive', () => {
     { age: 17, country: 'US', result: true },
     { age: 16, country: 'UK', result: false },
     { age: 17, country: 'UK', result: true },
-    { age: 18, country: 'UK', result: true },
+    { age: 18, country: 'UK', result: true }
   ])('should return $result for $age, $country', ({ age, country, result }) => {
     expect(canDrive(age, country)).toBe(result);
   });
@@ -186,7 +185,7 @@ describe('fetchData', () => {
 
   test('should return a promise that rejects to throw an error message', async () => {
     try {
-      const result = await fetchData(true);
+      await fetchData(true);
     } catch (error) {
       expect(error).toHaveProperty('reason');
       expect(error.reason).toMatch(/failed/i);

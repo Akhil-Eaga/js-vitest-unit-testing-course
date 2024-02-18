@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
   getDiscount,
   getPriceInCurrency,
@@ -7,7 +7,7 @@ import {
   login,
   renderPage,
   signUp,
-  submitOrder,
+  submitOrder
 } from '../src/mocking';
 import { getExchangeRate } from '../src/libs/currency';
 import { getShippingQuote } from '../src/libs/shipping';
@@ -32,7 +32,7 @@ vi.mock('../src/libs/email', async (importOriginal) => {
   const originalModule = await importOriginal();
   return {
     ...originalModule, // just returning the original functions without mocking them
-    sendEmail: vi.fn(), // returning a mock for the sendEmail function to achieve partial mocking
+    sendEmail: vi.fn() // returning a mock for the sendEmail function to achieve partial mocking
   };
 });
 
@@ -96,7 +96,7 @@ describe('getShippingInfo', () => {
   test('should return shipping info when a valid quote can be fetched', () => {
     vi.mocked(getShippingQuote).mockReturnValue({
       cost: 10,
-      estimatedDays: 2,
+      estimatedDays: 2
     });
     const result = getShippingInfo('FR');
 
@@ -172,7 +172,7 @@ describe('signUp', () => {
   });
 
   test('should send the welcome email if email is valid', async () => {
-    const result = await signUp(email);
+    await signUp(email);
 
     expect(sendEmail).toHaveBeenCalledOnce();
     // mock object is global and collects info from all test cases
